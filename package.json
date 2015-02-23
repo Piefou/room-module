@@ -1,0 +1,11 @@
+{
+  "name": "room-module",
+  "version": "0.0.1-dev",
+  "description": "Module de gestion de salles",
+  "main": "manager.js",
+  "repository": "",
+  "author": "pierre fourre<pierrefourre@sfr.fr>",
+  "dependencies": {
+	"rand-token": "~0.2.1"
+  }
+}
