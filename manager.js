@@ -1,36 +1,34 @@
-var Room = require('./room');
+var Room = require('./room').Room;
 
 /*
  * Gestionnaire des salles.
  */
-var RoomManager = {
+exports.RoomManager = {
 	rooms : [],
 	getRoom : function(token) {
-		for(var i=0; i<rooms.length; i++)
+		for(var i=0; i<this.rooms.length; i++)
 		{
-			if(rooms[i].getToken == token)
-				return rooms[i];
+			if(this.rooms[i].getToken() == token)
+				return this.rooms[i];
 		}
 		
 		return false;
 	},
 	
-	newRoom : function(name) {
-		var room = new Room(name);
-		rooms.push(room);
+	newRoom : function() {
+		var room = new Room();
+		this.rooms.push(room);
 		return room.getToken();
-	}
+	},
 	
 	deleteRoom : function(token) {
-		var room = getRoom(token);
-		room.close();
-		room.clean();
-		
-		for(var i=0; i<rooms.length; i++)
+		for(var i=0; i<this.rooms.length; i++)
 		{
-			if(rooms[i].getToken == token)
+			if(this.rooms[i].getToken() == token)
 			{
-				rooms[i].splice(i, 1);
+				this.rooms[i].close();
+				this.rooms[i].clean();
+				this.rooms.splice(i, 1);
 				return true;
 			}	
 		}

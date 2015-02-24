@@ -3,13 +3,14 @@ var randtoken = require('rand-token');
 /*
  * Objet représentant une salle.
  */
-function Room(name) {
-	this.name = name;
+function Room() {
+	this.name = "";
 	this.token = randtoken.generate(16);
 	this.members = [];
 	this.maxNbMembers = 30;
 	this.minNbMembers = 0;
-	this.open = false;
+	this.openState = false;
+	this.uniqueAttr = "";
 }
 
 /*
@@ -26,6 +27,22 @@ Room.prototype.getName = function() {
  */
 Room.prototype.setName = function(name) {
 	this.name = name;
+}
+
+/*
+ * Retourne l'attribut unique identifiant les membres de la salle.
+ * @return string
+ */
+Room.prototype.getUniqueAttr = function() {
+	return this.uniqueAttr;
+}
+
+/*
+ * Valorise l'attribut unique identifiant les membres de la salle.
+ * @param attr le nouveau attribut unique
+ */
+Room.prototype.setUniqueAttr = function(attr) {
+	this.uniqueAttr = attr;
 }
 
 /*
@@ -77,23 +94,23 @@ Room.prototype.setMaxNbMembers = function(maxNb) {
  */
 Room.prototype.setMinNbMembers = function(minNb) {
 	if(minNb > this.maxNbMembers)
-		throw "minNbMembers doit être supérieur ou égal à maxNbMembers";
+		throw "minNbMembers doit être inférieur ou égal à maxNbMembers";
 	else
-		this.maxNbMembers = maxNb;
+		this.minNbMembers = minNb;
 }
 
 /*
  * Ouvre la salle.
  */
 Room.prototype.open = function() {
-	this.open = true;
+	this.openState = true;
 }
 
 /*
  * Ferme la salle.
  */
 Room.prototype.close = function() {
-	this.open = false;
+	this.openState = false;
 }
 
 /*
@@ -109,7 +126,8 @@ Room.prototype.clean = function() {
  * @return boolean true si le membre est ajouté, false sinon.
  */
 Room.prototype.memberJoin = function(newMember) {
-	if(var res = (!this.isFull() && isOpen))
+	var res;	
+	if(res = (!this.isFull() && this.isOpen()))
 		this.members.push(newMember);
 
 	return res;
@@ -118,12 +136,16 @@ Room.prototype.memberJoin = function(newMember) {
 /*
  * Ajoute un membre à la salle, si sa capacité maximale n'a pas été atteinte.
  * @param le membre à enlever de la salle.
+ * @return boolean true si le membre a quitté la salle
  */
 Room.prototype.memberLeave = function(oldMember) {
-	if((var index = this.indexMember(oldMember)) != -1)
+	var index;
+	if((index = this.indexMember(oldMember)) != -1)
 		this.members.splice(index, 1);
 	else
 		throw "Le membre n'est pas dans cette salle.";
+		
+	return index;
 }
 
 /*
@@ -131,7 +153,7 @@ Room.prototype.memberLeave = function(oldMember) {
  * @return boolean true si la salle est ouverte, false si elle est fermée.
  */
 Room.prototype.isOpen = function() {
-	return this.open;
+	return this.openState;
 }
 
 /*
@@ -139,7 +161,7 @@ Room.prototype.isOpen = function() {
  * @return boolean true si la salle est fermée, false si elle est ouverte.
  */
 Room.prototype.isClosed = function() {
-	return !this.open;
+	return !this.openState;
 }
 
 /*
@@ -147,7 +169,7 @@ Room.prototype.isClosed = function() {
  * @return boolean true si le nombre de membres est supérieur ou égal au nombre maximum de membres autorisé, false sinon.
  */
 Room.prototype.isFull = function() {
-	return (this.members.length >= maxNbMembers);
+	return (this.members.length >= this.maxNbMembers);
 }
 
 /*
@@ -155,7 +177,7 @@ Room.prototype.isFull = function() {
  * @return boolean true si le nombre de membres est inférieur au nombre minimum de membres autorisé, false sinon.
  */
 Room.prototype.notEnough = function() {
-	return (this.members.length < minNbMembers);
+	return (this.members.length < this.minNbMembers);
 }
 
 /*
@@ -164,14 +186,37 @@ Room.prototype.notEnough = function() {
  * @return integer index du membre dans la salle, -1 si absent.
  */
 Room.prototype.indexMember = function(member) {
-	return this.members.indexOf(member);
+	if(this.uniqueAttr.length > 0)
+	{
+		for(var i=0; i<this.members.length; i++)
+		{
+			if(this.members[i][this.uniqueAttr] == member)
+				return i;
+		}
+	}
+	else
+	{
+		for(var i=0; i<this.members.length; i++)
+		{
+			if(this.members[i] == member)
+				return i;
+		}
+	}
+	
+	return -1;
 }
 
+/*
+ * Récupère le membre dans la salle.
+ * @param le membre à récupérer.
+ * @return object membre de la salle
+ */
 Room.prototype.getMember = function(member) {
-	if((var index = this.indexMember(member)) != -1)
+	var index;
+	if((index = this.indexMember(member)) != -1)
 		return this.members[index];
 	else
 		throw "Le membre n'est pas dans cette salle.";
 }
 
-module.exports = Room;
+exports.Room = Room;
