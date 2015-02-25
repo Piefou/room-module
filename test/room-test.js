@@ -1,5 +1,5 @@
 var assert = require('assert');
-var Room = require('../room').Room;
+var Room = require('../lib/room').Room;
 
 describe('Room', function(){
   
@@ -80,27 +80,18 @@ describe('Room', function(){
 	it('should have a member', function() {
 		var room = new Room();
 		room.open();
-		room.memberJoin("Member One");
+		var member = room.memberJoin();
 		assert.ok(room.getMembers().length == 1, "room have not a member");
 	});
   });
-  
-  describe('#memberJoin', function() {
-	it('should have not a member', function() {
-		var room = new Room();
-		//room.open();
-		var res = room.memberJoin("Member One");
-		assert.ok((room.getMembers().length == 0 && res == false), "room have not a member");
-	});
-  });
-  
+    
   describe('#memberJoin', function() {
 	it('should have not a member', function() {
 		var room = new Room();
 		room.open();
 		room.setMaxNbMembers(3);
 		room.members = ["One", "Two", "Three"];
-		var res = room.memberJoin("Member One");
+		var res = room.memberJoin();
 		assert.ok((room.getMembers().length == 3 && res == false), "room have not a member");
 	});
   });
@@ -109,8 +100,10 @@ describe('Room', function(){
 	it('should leave a member', function() {
 		var room = new Room();
 		room.open();
-		room.members = ["One", "Two", "Three"];
-		var res = room.memberLeave("Two");
+		var memberOne = room.memberJoin();
+		var memberTwo = room.memberJoin();
+		var memberThree = room.memberJoin();
+		var res = room.memberLeave(memberTwo);
 		assert.ok((room.getMembers().length == 2 && res == true), "the member did not leave the room");
 	});
   });
@@ -119,48 +112,23 @@ describe('Room', function(){
 	it('should throw a exception', function() {
 		var room = new Room();
 		room.open();
-		room.members = ["One", "Two", "Three"];
-		assert.throws(function() { room.memberLeave("Four"); }, /n'est pas/, "the member is in the romm");
+		var memberOne = room.memberJoin();
+		var memberTwo = room.memberJoin();
+		var memberThree = room.memberJoin();
+		var memberFour = "dummy"
+		assert.throws(function() { room.memberLeave(memberFour); }, /n'est pas/, "the member is in the romm");
 	});
   });
-  
-  describe('#clean', function() {
-	it('should clean the members list', function() {
-		var room = new Room();
-		room.open();
-		room.members = ["One", "Two", "Three"];
-		room.clean();
-		assert.ok(room.getMembers().length == 0, "the members list is not clean");
-	});
-  });
-  
-  describe('#clean', function() {
-	it('should clean the members list', function() {
-		var room = new Room();
-		room.open();
-		room.members = ["One", "Two", "Three"];
-		room.clean();
-		assert.ok(room.getMembers().length == 0, "the members list is not clean");
-	});
-  });
-  
+    
   describe('#getMember', function() {
 	it('should return the member', function() {
 		var room = new Room();
 		room.open();
-		room.members = ["One", "Two", "Three"];
-		assert.ok(room.getMember("One") == "One", "the member is not returned");
+		var memberOne = room.memberJoin();
+		var memberTwo = room.memberJoin();
+		var memberThree = room.memberJoin();
+		assert.ok(room.getMember(memberOne).token == memberOne, "the member is not returned");
 	});
   });  
-  
-  describe('#getMember', function() {
-	it('should return the member', function() {
-		var room = new Room();
-		room.open();
-		room.setUniqueAttr("Name");
-		room.members = [ { Name: "Toto", Age: 12 }, { Name: "Tata", Age: 24 }, { Name: "Titi", Age: 36 } ];
-		assert.ok(room.getMember("Tata").Age == 24 , "the member is not returned");
-	});
-  });  
-  
+    
 });

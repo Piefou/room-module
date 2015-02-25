@@ -1,6 +1,6 @@
 var assert = require('assert');
-var manager = require('../manager').RoomManager;
-var Room = require('../room').Room;
+var manager = require('../lib/manager').RoomManager;
+var Room = require('../lib/room').Room;
 
 describe('RoomManager', function() {
 
@@ -33,7 +33,7 @@ describe('RoomManager', function() {
 	});
 	
 	describe('#deleteRoom', function() {
-		it('should delete the room of the specified token', function() {
+		it('should not delete any room', function() {
 			var res = manager.deleteRoom("dummy");
 			assert.ok(res == false, "a room is deleted");
 		});
