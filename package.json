@@ -1,9 +1,12 @@
 {
   "name": "room-module",
-  "version": "0.0.1-dev",
+  "version": "v0.0.1-dev",
   "description": "Module de gestion de salles",
-  "main": "manager.js",
-  "repository": "",
+  "main": "index.js",
+  "repository": {
+	"type": "git",
+	"url": "https://github.com/Piefou/room-module.git"
+  },
   "author": "pierre fourre<pierrefourre@sfr.fr>",
   "dependencies": {
 	"rand-token": "~0.2.1"
