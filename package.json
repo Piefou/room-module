@@ -1,6 +1,6 @@
 {
   "name": "room-module",
-  "version": "v0.0.1-dev",
+  "version": "v0.0.3-dev",
   "description": "Module de gestion de salles",
   "main": "index.js",
   "repository": {
